@@ -90,8 +90,8 @@ bootstrap = Bootstrap(app)
 SECRET_KEY = 'secret'
 app.config['SECRET_KEY'] = SECRET_KEY
 
-{%extends "bootstrap/base.html" %}
-{%import "bootstrap/wtf.html" as wtf %}
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 #<!-- задаем заголовок страницы -->
 {% block title %}This is an page{% endblock %}
 #<!-- блок body -->
