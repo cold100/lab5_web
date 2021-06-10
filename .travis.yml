@@ -1,5 +1,9 @@
 language: python 
 install:   
--pip3 install flask 
+-chmod +x ./flaskapp/st.sh
+install:
+-pip3 install flask   
+-pip3 install gunicorn
 script:   
--python3 ./flaskapp/some_app.py
+-cd flaskapp   
+-./st.sh
