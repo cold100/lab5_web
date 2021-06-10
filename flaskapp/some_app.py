@@ -85,6 +85,42 @@ def net():
  # сети если был нажат сабмит, либо передадим falsy значения
   return render_template('net.html',form=form,image_name=filename,neurodic=neurodic) 
 
+
+bootstrap = Bootstrap(app)
+SECRET_KEY = 'secret'
+app.config['SECRET_KEY'] = SECRET_KEY
+В папке templates создадим шаблон net.html для обработки форм.
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+#<!-- задаем заголовок страницы -->
+{% block title %}This is an page{% endblock %}
+#<!-- блок body -->
+{% block content %}
+{{ wtf.quick_form(form, method='post',enctype="multipart/form-data", action="net") }}
+#<!-- один из стандартных тэгов html - заголовок второго уровня -->
+<h2>Classes: </h2> 
+
+  #<!-- проверяем есть ли данные классификации -->
+{% if neurodic %}
+# <!-- запускаем цикл прохода по словарю и отображаем ключ-значение -->
+# <!-- классифицированных файлов -->
+  {% for key, value in neurodic.items() %}
+  <h3>{{key}}: {{value}}</h3>
+  {% endfor %}
+{% else %}
+  <h3> There is no classes </h3>
+{% endif %}
+<h2>Image is here: </h2>
+#<!-- отображаем загруженное изображение с закругленными углами -->
+#<!-- если оно есть (после submit) -->
+{% if image_name %}
+ <p>{{image_name}}
+ <p><img src={{image_name}} class="img-rounded" alt="My Image" width = 224 height=224 />
+{% else %}
+  <p> There is no image yet </p>
+{% endif %}
+{% endblock %} 
+
 from flask import request
 from flask import Response
 import base64
@@ -123,82 +159,3 @@ def apinet():
    return resp 
 
 
-
-bootstrap = Bootstrap(app)
-SECRET_KEY = 'secret'
-app.config['SECRET_KEY'] = SECRET_KEY
-В папке templates создадим шаблон net.html для обработки форм.
-{% extends "bootstrap/base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-#<!-- задаем заголовок страницы -->
-{% block title %}This is an page{% endblock %}
-#<!-- блок body -->
-{% block content %}
-{{ wtf.quick_form(form, method='post',enctype="multipart/form-data", action="net") }}
-#<!-- один из стандартных тэгов html - заголовок второго уровня -->
-<h2>Classes: </h2> 
-
-  #<!-- проверяем есть ли данные классификации -->
-{% if neurodic %}
-# <!-- запускаем цикл прохода по словарю и отображаем ключ-значение -->
-# <!-- классифицированных файлов -->
-  {% for key, value in neurodic.items() %}
-  <h3>{{key}}: {{value}}</h3>
-  {% endfor %}
-{% else %}
-  <h3> There is no classes </h3>
-{% endif %}
-<h2>Image is here: </h2>
-#<!-- отображаем загруженное изображение с закругленными углами -->
-#<!-- если оно есть (после submit) -->
-{% if image_name %}
- <p>{{image_name}}
- <p><img src={{image_name}} class="img-rounded" alt="My Image" width = 224 height=224 />
-{% else %}
-  <p> There is no image yet </p>
-{% endif %}
-{% endblock %}   
-
-from flask import request
-from flask import Response
-import base64
-from PIL import Image
-from io import BytesIO
-import json
-# метод для обработки запроса от пользователя
-@app.route("/apinet",methods=['GET', 'POST'])
-def apinet():
- neurodic = {}
- # проверяем что в запросе json данные
- if request.mimetype == 'application/json':
-  # получаем json данные
- data = request.get_json()
- # берем содержимое по ключу, где хранится файл
- # закодированный строкой base64
- # декодируем строку в массив байт, используя кодировку utf-8
- # первые 128 байт ascii и utf-8 совпадают, потому можно
- filebytes = data['imagebin'].encode('utf-8')
- # декодируем массив байт base64 в исходный файл изображение
- cfile = base64.b64decode(filebytes)
- # чтобы считать изображение как файл из памяти используем BytesIO
- img = Image.open(BytesIO(cfile))
- decode = neuronet.getresult([img])
- neurodic = {}
- for elem in decode:
- neurodic[elem[0][1]] = str(elem[0][2])
- print(elem)
- # пример сохранения переданного файла
- # handle = open('./static/f.png','wb')
- # handle.write(cfile)
- # handle.close()
- # преобразуем словарь в json строку
- ret = json.dumps(neurodic)
- # готовим ответ пользователю
- resp = Response(response=ret,
- status=200,
- mimetype="application/json")
- # возвращаем ответ
- return resp 
-  
-  
-  
