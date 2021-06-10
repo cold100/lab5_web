@@ -5,4 +5,4 @@ python3 client.py
 sleep 5
 echo $APP_PID
 kill -TERM $APP_PID
-exit 0
+exit 1
