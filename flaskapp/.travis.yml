@@ -1,1 +1,2 @@
-
+-pip3 install flask
+-python3 ./flaskapp/some_app.py 
