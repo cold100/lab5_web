@@ -89,7 +89,7 @@ def net():
 bootstrap = Bootstrap(app)
 SECRET_KEY = 'secret'
 app.config['SECRET_KEY'] = SECRET_KEY
-В папке templates создадим шаблон net.html для обработки форм.
+
 {% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 #<!-- задаем заголовок страницы -->
